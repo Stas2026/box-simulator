@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brawl Clicker Menu</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* CSS Стилі */
+        body {
+            margin: 0;
+            overflow: hidden;
+            font-family: 'Roboto', sans-serif;
+            color: white;
+            -webkit-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            background-color: #000;
+        }
+
+        .background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('img/lobby.jpeg');
+            background-size: cover;
+            background-position: center;
+            z-index: -1;
+        }
+
+        .container {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+
+        .header {
+            width: 95%;
+            text-align: center;
+            margin-top: 15px;
+            z-index: 1;
+        }
+
+        .currency-panel {
+            display: inline-flex;
+            align-items: center;
+            background-color: rgba(0, 0, 0, 0.6);
+            padding: 8px 20px;
+            border-radius: 25px;
+            border: 3px solid gold;
+            box-shadow: 0 0 10px gold;
+        }
+
+        .currency-panel img {
+            height: 35px;
+            margin-right: 12px;
+        }
+
+        .currency-count {
+            font-family: 'Open Sans', sans-serif;
+            font-size: 1.8em;
+            font-weight: 700;
+            color: #ffdd00;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .main-content {
+            flex-grow: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1;
+        }
+
+        .colt-image {
+            width: 180px;
+            cursor: pointer;
+            transition: transform 0.1s ease-in-out;
+            filter: drop-shadow(0 0 15px rgba(0, 0, 0, 0.5));
+        }
+
+        .colt-image:active {
+            transform: scale(0.9);
+        }
+
+        .footer {
+            width: 98%;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: center; /* Центруємо групу кнопок */
+            gap: 8px; /* Зменшений відступ між елементами для компактності */
+            z-index: 1;
+            flex-wrap: wrap;
+            padding: 0 10px;
+            box-sizing: border-box;
+            align-items: center; /* Вирівнюємо елементи по центру вертикалі у флекс-контейнері */
+        }
+
+        .nav-button {
+            padding: 5px; /* Зменшені відступи для кнопок із зображеннями */
+            font-size: 1em; /* Розмір шрифту збережено для кнопки "Події" */
+            cursor: pointer;
+            background-color: rgba(0, 0, 0, 0.75);
+            color: white; /* Колір тексту збережено для кнопки "Події" */
+            border: 2px solid #00b0ff;
+            border-radius: 10px;
+            /* text-transform: uppercase; --- Видалено, оскільки більшість кнопок - зображення */
+            font-weight: 700; /* Жирний шрифт для кнопки "Події" */
+            transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+            font-family: 'Roboto', sans-serif; /* Шрифт для кнопки "Події" */
+            box-shadow: 0 0 5px rgba(0, 176, 255, 0.5);
+            /* min-width: 80px; -- Видалено, щоб зображення визначали розмір */
+            /* max-width: 150px; -- Видалено, щоб зображення визначали розмір */
+            height: 60px; /* Фіксована висота для кнопок */
+            display: flex; /* Flexbox для центрування вмісту (зображення або тексту) */
+            justify-content: center;
+            align-items: center;
+        }
+
+        .nav-button img {
+            display: block; /* Зображення як блоковий елемент */
+            max-width: 100%; /* Зображення масштабується по ширині контейнера */
+            max-height: 100%; /* Зображення масштабується по висоті контейнера */
+            object-fit: contain; /* Зберігає пропорції зображення */
+        }
+
+        /* Стилі при наведенні */
+        .nav-button:hover {
+            background-color: rgba(0, 0, 0, 0.9);
+            border-color: #33ccff;
+            box-shadow: 0 0 8px rgba(0, 176, 255, 0.8);
+        }
+
+        /* Стиль для активної кнопки Меню */
+        .nav-button.active-button {
+            border-color: #ffdd00; /* Жовта рамка */
+            background-color: rgba(255, 221, 0, 0.3); /* Напівпрозорий жовтий фон */
+            box-shadow: 0 0 10px rgba(255, 221, 0, 0.8); /* Сильніше жовте світіння */
+            color: #ffdd00; /* Жовтий текст для кнопки "Події", якщо вона стане активною */
+        }
+
+         /* Анімація летючої монети */
+         @keyframes coin-fly-to-panel {
+             0% {
+                 opacity: 1;
+                 transform: translate(-50%, -50%) scale(1);
+             }
+             100% {
+                 opacity: 0;
+                 transform: translate(0, 0) scale(0.5); /* Кінцева позиція буде встановлена JS */
+             }
+         }
+
+         .flying-coin {
+             position: fixed;
+             width: 30px;
+             height: 30px;
+             pointer-events: none;
+             z-index: 10;
+             opacity: 0;
+             transition: transform 1s ease-out, opacity 1s ease-out;
+         }
+
+
+    </style>
+</head>
+<body>
+
+    <div class="background"></div>
+
+    <div class="container">
+        <div class="header">
+            <div class="currency-panel">
+                <img src="img/gold_coin.png" alt="Gold Coin">
+                <span id="coinCount" class="currency-count">0</span> </div>
+        </div>
+
+        <div class="main-content">
+            <img src="img/colt.png" alt="Colt" class="colt-image" id="coltImage">
+        </div>
+
+        <div class="footer">
+            <button class="nav-button">
+                <img src="img/shop_button.png" alt="Магазин">
+            </button>
+
+            <button class="nav-button active-button">
+                 <img src="img/menu_button.png" alt="Меню">
+            </button>
+
+            <button class="nav-button">Події</button>
+        </div>
+
+    </div>
+
+    <script>
+        // JavaScript Код
+        let coins = 0; // Початкова кількість монет
+        const coinCountElement = document.getElementById('coinCount'); // Знаходимо елемент для відображення рахунку
+        const coltImage = document.getElementById('coltImage'); // Знаходимо зображення Кольта
+        const currencyPanel = document.querySelector('.currency-panel'); // Знаходимо панель валюти
+
+        // Додаємо обробник події кліку на зображення Кольта
+        coltImage.addEventListener('click', (event) => {
+            coins++; // Збільшуємо кількість монет
+            coinCountElement.textContent = coins; // Оновлюємо текст на сторінці
+
+            console.log('Клік! Монет:', coins); // Виводимо в консоль для перевірки
+
+            // Створюємо та анімуємо летючу монету
+            createFlyingCoin(event.clientX, event.clientY);
+        });
+
+        function createFlyingCoin(startX, startY) {
+            const flyingCoin = document.createElement('img');
+            flyingCoin.src = 'img/gold_coin.png'; // Зображення монети
+            flyingCoin.classList.add('flying-coin');
+
+            // Встановлюємо початкову позицію монети в місці кліка
+            flyingCoin.style.left = `${startX - 15}px`; // -15px, щоб центр монети був в точці кліка
+            flyingCoin.style.top = `${startY - 15}px`;
+            flyingCoin.style.opacity = '1'; // Робимо видимою
+
+            document.body.appendChild(flyingCoin);
+
+            // Отримуємо кінцеву позицію (центр монети в панелі валюти)
+            const panelRect = currencyPanel.getBoundingClientRect();
+            const targetX = panelRect.left + panelRect.width / 2 - 15; // Приблизно центр монети в панелі
+            const targetY = panelRect.top + panelRect.height / 2 - 15; // Приблизно центр монети в панелі
+
+            // Розраховуємо зміщення від початкової позиції
+            const deltaX = targetX - startX + 15;
+            const deltaY = targetY - startY + 15;
+
+            // Застосовуємо анімацію через style.transform
+            flyingCoin.style.transform = `translate(${deltaX}px, ${deltaY}px) scale(0.5)`;
+            flyingCoin.style.opacity = '0';
+
+
+            // Видаляємо елемент після завершення анімації
+            flyingCoin.addEventListener('transitionend', () => {
+                flyingCoin.remove();
+            });
+        }
+
+
+        // Обробники кліків для кнопок навігації
+        const navButtons = document.querySelectorAll('.nav-button');
+        navButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                // Прибираємо клас 'active-button' з усіх кнопок
+                navButtons.forEach(btn => btn.classList.remove('active-button'));
+                // Додаємо клас 'active-button' до натиснутої кнопки
+                button.classList.add('active-button');
+
+                // Визначаємо, яка кнопка була натиснута
+                let buttonText = button.textContent.trim(); // Для текстової кнопки
+                if (buttonText === "") { // Якщо тексту немає, це кнопка із зображенням
+                     const imgAlt = button.querySelector('img')?.alt; // Беремо alt текст зображення
+                     if (imgAlt) {
+                         buttonText = imgAlt;
+                     } else {
+                         buttonText = "Невідома кнопка";
+                     }
+                }
+                console.log(`Натиснуто кнопку: ${buttonText}`);
+
+                // Тут буде логіка переходу між "сторінками" гри
+                // Наприклад, if (buttonText === 'Магазин') { показатиМагазин(); }
+            });
+        });
+
+        // Робимо кнопку Меню активною при завантаженні сторінки
+        document.addEventListener('DOMContentLoaded', () => {
+             // Знаходимо кнопку Меню, яка має клас active-button
+             const menuButton = document.querySelector('.nav-button.active-button');
+             // Або, якщо active-button може бути на інших, шукаємо за alt текстом зображення:
+             // const menuButton = Array.from(navButtons).find(btn => btn.querySelector('img')?.alt === 'Меню');
+
+             if (menuButton) {
+                 // Переконуємось, що саме кнопка Меню активна при старті
+                 const imgElement = menuButton.querySelector('img');
+                 if (imgElement && imgElement.alt === 'Меню') {
+                      menuButton.classList.add('active-button');
+                 } else if (menuButton.textContent.trim() === 'Меню') { // Якщо кнопка текстова
+                       menuButton.classList.add('active-button');
+                 } else {
+                      // Якщо за якоюсь причиною active-button на іншій кнопці, знімаємо її
+                      menuButton.classList.remove('active-button');
+                      // І шукаємо кнопку Меню, щоб зробити її активною
+                      const actualMenuButton = Array.from(navButtons).find(btn => btn.querySelector('img')?.alt === 'Меню' || btn.textContent.trim() === 'Меню');
+                      if (actualMenuButton) {
+                          actualMenuButton.classList.add('active-button');
+                      }
+                 }
+             } else {
+                  // Якщо жодна кнопка не має active-button при старті, шукаємо Меню і робимо активною
+                  const actualMenuButton = Array.from(navButtons).find(btn => btn.querySelector('img')?.alt === 'Меню' || btn.textContent.trim() === 'Меню');
+                   if (actualMenuButton) {
+                      actualMenuButton.classList.add('active-button');
+                  }
+             }
+         });
+
+
+    </script>
+
+</body>
+</html>
