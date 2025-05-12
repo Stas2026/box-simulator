@@ -2,7 +2,7 @@
 <html lang="uk">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-width, initial-scale=1.0">
     <title>Brawl Clicker</title>
 
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
@@ -10,76 +10,128 @@
 
     <style>
         /* CSS Стилі */
-        body {
+        html, body {
             margin: 0;
-            overflow: hidden; /* Прибираємо прокрутку */
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        body {
             font-family: 'Roboto', sans-serif;
             color: white;
-            -webkit-user-select: none; /* Заборона виділення тексту */
+            -webkit-user-select: none;
             -ms-user-select: none;
             user-select: none;
             background-color: #000;
         }
 
+        /* Фонове зображення головного меню */
         .background {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-image: url('img/lobby.jpeg'); /* Шлях до фону */
+            background-image: url('img/lobby.jpeg'); /* Шлях до фону головного меню */
             background-size: cover;
             background-position: center;
-            z-index: -1;
+            z-index: -1; /* Завжди на задньому плані */
         }
 
+        /* Головний контейнер */
         .container {
             position: relative;
             width: 100%;
             height: 100vh; /* Висота в'юпорту */
             display: flex;
-            flex-direction: column; /* Елементи розташовані по вертикалі */
-            justify-content: space-between; /* Розподіляємо простір */
-            align-items: center; /* Центруємо по горизонталі */
-            padding: 10px;
+            flex-direction: column;
+            align-items: center;
+            padding: 0;
             box-sizing: border-box;
         }
 
-        /* Контейнер для різних екранів (меню, магазин тощо) */
+        /* Контейнер для різних екранів (завантаження, меню, магазин тощо) */
         #viewsContainer {
-            flex-grow: 1; /* Займає весь доступний простір між хедером і футером */
             width: 100%;
+            height: 100vh; /* viewsContainer займає всю висоту в'юпорту */
             position: relative; /* База для абсолютного позиціонування екранів */
-            overflow-y: auto; /* Дозволяє прокрутку, якщо вміст екрану не поміщається */
+            overflow-y: auto; /* Дозволяє прокрутку вмісту екранів */
         }
 
-        /* Базові стилі для всіх екранів */
+        /* Базові стилі для всіх екранів (розміщуються всередині viewsContainer) */
         .view {
             position: absolute; /* Розміщуємо екрани абсолютно всередині #viewsContainer */
             top: 0;
             left: 0;
             width: 100%;
-            height: 100%; /* Займають всю висоту #viewsContainer */
-            display: flex; /* Використовуємо Flexbox для внутрішнього розташування */
+            height: 100%; /* Займають 100% висоти #viewsContainer (що тепер 100vh) */
+            display: flex;
             flex-direction: column;
             align-items: center;
-            padding-bottom: 70px; /* Відступ знизу, щоб вміст не ховався під футером */
+            padding: 10px;
+            padding-bottom: 80px; /* Відступ знизу, щоб вміст не ховався за футером */
             box-sizing: border-box;
-            overflow-y: auto; /* Дозволяє прокрутку вмісту всередині кожного екрану */
-            /* background-color: rgba(0, 0, 0, 0.5);  Можна додати напівпрозорий фон для тестування */
+            overflow-y: auto;
         }
 
         /* Стиль для прихованих екранів */
         .hidden {
-            display: none !important; /* Приховуємо елемент, !important для пріоритету */
+            display: none !important;
         }
+
+        /* === Стилі для екрану завантаження === */
+        #loadingView {
+            /* Наслідує стилі .view */
+             background-image: url('img/loading_2018_original.png'); /* Шлях до фону завантаження */
+             background-size: cover; /* Зображення розтягується, щоб повністю покрити елемент */
+             background-position: center; /* Центруємо фонове зображення */
+             background-repeat: no-repeat; /* Забороняємо повтор фону */
+             justify-content: flex-end; /* Вирівнюємо вміст (прогрес-бар) внизу */
+             padding-bottom: 10%; /* Відступ від низу екрану для вмісту завантаження */
+             z-index: 3; /* Екран завантаження поверх футера */
+        }
+
+        .loading-content {
+            width: 80%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .loading-text {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: white;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            font-family: 'Open Sans', sans-serif;
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            height: 25px;
+            background-color: rgba(0, 0, 0, 0.6);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 3px solid #00b0ff;
+            box-shadow: 0 0 10px rgba(0, 176, 255, 0.8);
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            width: 0%;
+            background-color: #ffdd00;
+            transition: width 0.3s ease;
+        }
+        /* === Кінець стилів для екрану завантаження === */
+
 
         /* Специфічні стилі для екрану меню */
         #menuView .header {
              width: 95%;
              text-align: center;
              margin-top: 15px;
-             z-index: 1; /* Панель поверх інших елементів меню */
+             z-index: 1;
         }
 
         #menuView .currency-panel {
@@ -106,11 +158,11 @@
         }
 
         #menuView .main-content {
-            flex-grow: 1; /* Займає весь доступний простір в меню між хедером і низом */
+            flex-grow: 1;
             display: flex;
             justify-content: center;
             align-items: center;
-            z-index: 1; /* Контент поверх інших елементів меню */
+            z-index: 1;
         }
 
         #menuView .colt-image {
@@ -125,38 +177,42 @@
         }
 
 
-        /* Стилі для футера (навігаційні кнопки) */
+        /* === Футер (навігаційні кнопки) - Розміщується абсолютно внизу поверх екранів === */
         .footer {
-            width: 98%;
-            margin-bottom: 10px;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            z-index: 2; /* Футер поверх інших екранів */
             display: flex;
-            justify-content: center; /* Центруємо групу кнопок */
-            gap: 8px; /* Зменшений відступ між елементами */
-            z-index: 2; /* Футер поверх екранів */
+            justify-content: center;
+            gap: 8px;
             flex-wrap: wrap;
-            padding: 0 10px;
+            padding: 10px;
             box-sizing: border-box;
             align-items: center;
+            background-color: rgba(0, 0, 0, 0.8);
         }
+         /* === Кінець Футера === */
 
         .nav-button {
-            padding: 5px; /* Зменшені відступи для кнопок із зображеннями */
-            font-size: 1em; /* Розмір шрифту збережено для кнопки "Події" */
+            padding: 5px;
+            font-size: 1em;
             cursor: pointer;
             background-color: rgba(0, 0, 0, 0.75);
-            color: white; /* Колір тексту збережено для кнопки "Події" */
+            color: white;
             border: 2px solid #00b0ff;
             border-radius: 10px;
-            font-weight: 700; /* Жирний шрифт для кнопки "Події" */
+            font-weight: 700;
             transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
-            font-family: 'Roboto', sans-serif; /* Шрифт для кнопки "Події" */
+            font-family: 'Roboto', sans-serif;
             box-shadow: 0 0 5px rgba(0, 176, 255, 0.5);
-            height: 60px; /* Фіксована висота для кнопок */
+            height: 60px;
             display: flex;
             justify-content: center;
             align-items: center;
-            flex-grow: 1; /* Дозволяє кнопкам трохи розтягуватись */
-            max-width: 120px; /* Максимальна ширина кнопки */
+            flex-grow: 1;
+            max-width: 120px;
         }
 
         .nav-button img {
@@ -173,10 +229,10 @@
         }
 
         .nav-button.active-button {
-            border-color: #ffdd00; /* Жовта рамка */
-            background-color: rgba(255, 221, 0, 0.3); /* Напівпрозорий жовтий фон */
-            box-shadow: 0 0 10px rgba(255, 221, 0, 0.8); /* Сильніше жовте світіння */
-            color: #ffdd00; /* Жовтий текст для кнопки "Події", якщо вона стане активною */
+            border-color: #ffdd00;
+            background-color: rgba(255, 221, 0, 0.3);
+            box-shadow: 0 0 10px rgba(255, 221, 0, 0.8);
+            color: #ffdd00;
         }
 
          /* Анімація летючої монети */
@@ -204,9 +260,8 @@
 
         /* Стилі для екрану магазину (тимчасові) */
         #shopView {
-             /* Наслідує стилі .view */
-             justify-content: flex-start; /* Вирівнювання вмісту магазину зверху */
-             padding-top: 20px; /* Відступ зверху для вмісту магазину */
+             justify-content: flex-start;
+             padding-top: 20px;
         }
 
         #shopView h2 {
@@ -222,13 +277,12 @@
 
         /* Стилі для екрану подій (тимчасові) */
          #eventsView {
-              /* Наслідує стилі .view */
               justify-content: flex-start;
               padding-top: 20px;
          }
          #eventsView h2 {
              margin-top: 0;
-             color: #ff0000; /* Червоний колір */
+             color: #ff0000;
              font-family: 'Open Sans', sans-serif;
              text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
          }
@@ -246,11 +300,22 @@
     <div class="container">
 
         <div id="viewsContainer">
-            <div id="menuView" class="view">
+
+            <div id="loadingView" class="view">
+                 <div class="loading-content">
+                    <div id="loadingPercentage" class="loading-text">0%</div>
+                     <div class="progress-bar-container">
+                         <div id="progressBarFill" class="progress-bar-fill"></div>
+                    </div>
+                 </div>
+            </div>
+
+            <div id="menuView" class="view hidden">
                  <div class="header">
                     <div class="currency-panel">
                         <img src="img/gold_coin.png" alt="Gold Coin">
-                        <span id="coinCount" class="currency-count">0</span> </div>
+                        <span id="coinCount" class="currency-count">0</span>
+                    </div>
                 </div>
                 <div class="main-content">
                     <img src="img/colt.png" alt="Colt" class="colt-image" id="coltImage">
@@ -260,7 +325,7 @@
             <div id="shopView" class="view hidden">
                 <h2>Магазин</h2>
                 <p>Тут буде вміст магазину: товари, пропозиції тощо.</p>
-                </div>
+            </div>
 
             <div id="eventsView" class="view hidden">
                  <h2>Події</h2>
@@ -273,11 +338,9 @@
             <button class="nav-button">
                 <img src="img/shop_button.png" alt="Магазин">
             </button>
-
             <button class="nav-button active-button">
                  <img src="img/menu_button.png" alt="Меню">
             </button>
-
             <button class="nav-button">Події</button>
         </div>
 
@@ -285,155 +348,256 @@
 
     <script>
         // JavaScript Код
+        // Цей код відповідає за логіку гри та симуляцію завантаження
+
+
+        // Оголошення змінних гри
         let coins = 0; // Початкова кількість монет
         const coinCountElement = document.getElementById('coinCount'); // Елемент для відображення рахунку
         const coltImage = document.getElementById('coltImage'); // Зображення Кольта
         const currencyPanel = document.querySelector('.currency-panel'); // Панель валюти
 
-        // Посилання на контейнер екранів та самі екрани
-        const viewsContainer = document.getElementById('viewsContainer');
-        const menuView = document.getElementById('menuView');
-        const shopView = document.getElementById('shopView');
-        const eventsView = document.getElementById('eventsView'); // Посилання на екран подій
+        // Отримання посилань на елементи екранів
+        const viewsContainer = document.getElementById('viewsContainer'); // Контейнер всіх екранів
+        const loadingView = document.getElementById('loadingView'); // Екран завантаження
+        const menuView = document.getElementById('menuView'); // Екран меню
+        const shopView = document.getElementById('shopView'); // Екран магазину
+        const eventsView = document.getElementById('eventsView'); // Екран подій
+
+        // Отримання посилань на елементи екрану завантаження
+        const loadingPercentageElement = document.getElementById('loadingPercentage'); // Текст відсотка
+        const progressBarFillElement = document.getElementById('progressBarFill'); // Заповнення прогрес-бару
+
+        // Отримання посилань на кнопки навігації - ЦЯ ЗМІННА ОГОЛОШУЄТЬСЯ ТУТ ЛИШЕ ОДИН РАЗ
+        const navButtons = document.querySelectorAll('.nav-button');
 
 
-        // Додаємо обробник події кліку на зображення Кольта
+        // Обробник події: клік на зображення Кольта
         coltImage.addEventListener('click', (event) => {
             coins++; // Збільшуємо кількість монет
-            coinCountElement.textContent = coins; // Оновлюємо текст
+            coinCountElement.textContent = coins; // Оновлюємо текст на екрані
 
-            console.log('Клік! Монет:', coins);
+            console.log('Клік! Монет:', coins); // Вивід у консоль браузера
 
-            // Створюємо та анімуємо летючу монету
+            // Запускаємо анімацію летючої монети
             createFlyingCoin(event.clientX, event.clientY);
         });
 
+        // Функція для створення та анімації летючої монети
         function createFlyingCoin(startX, startY) {
-            const flyingCoin = document.createElement('img');
-            flyingCoin.src = 'img/gold_coin.png';
-            flyingCoin.classList.add('flying-coin');
+             const flyingCoin = document.createElement('img'); // Створюємо елемент зображення
+             flyingCoin.src = 'img/gold_coin.png'; // Встановлюємо шлях до монети
+             flyingCoin.classList.add('flying-coin'); // Додаємо клас для стилів анімації
 
-            // Встановлюємо початкову позицію в місці кліка
-            flyingCoin.style.left = `${startX - 15}px`;
-            flyingCoin.style.top = `${startY - 15}px`;
-            flyingCoin.style.opacity = '1';
+             // Встановлюємо початкову позицію монети там, де був клік
+             flyingCoin.style.left = `${startX - 15}px`; // -15px для центрування монети
+             flyingCoin.style.top = `${startY - 15}px`;
+             flyingCoin.style.opacity = '1'; // Робимо видимою
 
-            document.body.appendChild(flyingCoin);
+             document.body.appendChild(flyingCoin); // Додаємо монету в DOM
 
-            // Отримуємо кінцеву позицію (центр монети в панелі валюти)
-            const panelRect = currencyPanel.getBoundingClientRect();
-            const targetX = panelRect.left + panelRect.width / 2 - 15;
-            const targetY = panelRect.top + panelRect.height / 2 - 15;
+             // Отримуємо позицію панелі валюти для кінцевої точки анімації
+             const panelRect = currencyPanel.getBoundingClientRect();
+             const targetX = panelRect.left + panelRect.width / 2 - 15; // Центр панелі
+             const targetY = panelRect.top + panelRect.height / 2 - 15;
 
-            // Розраховуємо зміщення
-            const deltaX = targetX - startX + 15;
-            const deltaY = targetY - startY + 15;
+             // Розраховуємо зміщення для анімації
+             const deltaX = targetX - startX + 15;
+             const deltaY = targetY - startY + 15;
 
-            // Застосовуємо анімацію через style.transform
-            flyingCoin.style.transform = `translate(${deltaX}px, ${deltaY}px) scale(0.5)`;
-            flyingCoin.style.opacity = '0';
+             // Застосовуємо анімацію трансформації та зникнення
+             flyingCoin.style.transform = `translate(${deltaX}px, ${deltaY}px) scale(0.5)`;
+             flyingCoin.style.opacity = '0';
 
-            // Видаляємо елемент після завершення анімації
-            flyingCoin.addEventListener('transitionend', () => {
-                flyingCoin.remove();
-            });
+             // Видаляємо елемент монети після завершення анімації
+             flyingCoin.addEventListener('transitionend', () => {
+                 flyingCoin.remove();
+             });
         }
 
 
-        // Обробники кліків для кнопок навігації
-        const navButtons = document.querySelectorAll('.nav-button');
-        navButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                // Прибираємо клас 'active-button' з усіх кнопок
-                navButtons.forEach(btn => btn.classList.remove('active-button'));
-                // Додаємо клас 'active-button' до натиснутої кнопки
-                button.classList.add('active-button');
+        // --- Логіка симуляції завантаження ---
+        // Ця функція керує анімацією прогрес-бару та тексту відсотка
+        function startLoadingSimulation() {
+            let currentStep = 0; // Поточний крок симуляції
+            const duration = 2000; // Загальна тривалість симуляції в мілісекундах (2 секунди)
+            const interval = 20; // Інтервал оновлення в мілісекундах (оновлюємо кожні 20 мс)
+            // Розраховуємо загальну кількість кроків, округлюючи вгору, щоб гарантувати досягнення 100%
+            const totalSteps = Math.ceil(duration / interval);
 
-                // Визначаємо, яка кнопка була натиснута (за alt зображення або текстом)
+            console.log("Симуляція завантаження: Запущено інтервал."); // Вивід у консоль
+
+
+            // Запускаємо інтервал, який буде виконуватись кожні 'interval' мілісекунд
+            const loadingInterval = setInterval(() => {
+                currentStep++; // Збільшуємо лічильник кроків
+
+                // Розраховуємо поточний прогрес у відсотках на основі кроку
+                let progress = (currentStep / totalSteps) * 100;
+
+                // Обмежуємо прогрес до 100%
+                if (progress > 100) {
+                    progress = 100;
+                }
+
+                // Оновлюємо текст відсотка завантаження (округляємо до цілого)
+                // Використовуємо Math.min, щоб гарантувати, що відображається не більше 100%
+                loadingPercentageElement.textContent = `${Math.floor(Math.min(progress, 100))}%`;
+                progressBarFillElement.style.width = `${Math.min(progress, 100)}%`;
+
+                // === Умова завершення симуляції ===
+                // Якщо ми досягли або перевищили загальну кількість кроків
+                if (currentStep >= totalSteps) {
+                     // Явно встановлюємо фінальні значення UI на 100% перед зупинкою інтервалу
+                     loadingPercentageElement.textContent = `100%`;
+                     progressBarFillElement.style.width = `100%`;
+
+                    clearInterval(loadingInterval); // Зупиняємо виконання інтервалу
+                    console.log("Симуляція завантаження завершена."); // Вивід у консоль
+
+                    // === Переходимо до головного меню після невеликої затримки ===
+                    // Це дає час візуально побачити 100% та повний бар перед зміною екрана
+                    // Викликаємо функцію transitionToMenu через 100 мілісекунд
+                    setTimeout(transitionToMenu, 100);
+                }
+            }, interval); // Інтервал виконання
+        }
+        // --- Кінець логіки симуляції завантаження ---
+
+
+        // --- Функція переходу до Меню після завантаження ---
+        // Ця функція приховує екран завантаження та показує екран меню
+        function transitionToMenu() {
+            loadingView.classList.add('hidden'); // Додаємо клас 'hidden' до екрану завантаження
+            menuView.classList.remove('hidden'); // Видаляємо клас 'hidden' з екрану меню
+
+            // Робимо кнопку Меню активною в нижній панелі навігації
+            // Використовуємо вже оголошену змінну navButtons ззовні
+             navButtons.forEach(btn => btn.classList.remove('active-button')); // Прибираємо активний клас з усіх кнопок
+             // Знаходимо кнопку Меню (за її alt текстом або текстовим вмістом)
+             const menuButton = Array.from(navButtons).find(btn =>
+                 btn.querySelector('img')?.alt === 'Меню' || (btn.textContent.trim() === 'Меню' && !btn.querySelector('img'))
+             );
+             // Якщо кнопку Меню знайдено, робимо її активною
+             if (menuButton) {
+                 menuButton.classList.add('active-button');
+                 console.log("Кнопка Меню зроблена активною після завантаження.");
+             } else {
+                  console.warn("Кнопка Меню не знайдена для встановлення активного стану після завантаження.");
+             }
+
+            viewsContainer.scrollTop = 0; // Прокручуємо контейнер екранів нагору (на випадок, якщо був прокручений)
+            console.log("Перехід до меню завершено."); // Вивід у консоль
+        }
+
+
+        // Обробники кліків для кнопок навігації (ВИКОРИСТОВУЮТЬСЯ ПІСЛЯ ЗАВАНТАЖЕННЯ)
+        // Цей код керує перемиканням екранів при натисканні на кнопки навігації
+        // Використовуємо вже оголошену змінну navButtons ззовні
+        navButtons.forEach(button => { // Для кожної кнопки навігації
+            button.addEventListener('click', () => { // Додаємо обробник кліку
+                // Керування активним станом кнопок
+                navButtons.forEach(btn => btn.classList.remove('active-button')); // Прибираємо активний клас з усіх
+                button.classList.add('active-button'); // Додаємо активний клас до натиснутої
+
+                // Визначаємо, яка кнопка була натиснута (за alt зображення або текстовим вмістом)
                 let buttonText = button.querySelector('img')?.alt || button.textContent.trim();
 
-                console.log(`Натиснуто кнопку: ${buttonText}`);
+                console.log(`Натиснуто кнопку: ${buttonText}`); // Вивід у консоль
 
-                // --- Логіка перемикання екранів ---
-                // Спершу приховуємо всі екрани
+                // === Логіка перемикання екранів ===
+                // Ця логіка виконується при кліках по кнопках навігації ПІСЛЯ того, як екран завантаження вже приховано
+                // Спершу приховуємо всі екрани (меню, магазин, події)
                 hideAllViews();
 
                 // Показуємо відповідний екран залежно від натиснутої кнопки
                 if (buttonText === 'Магазин') {
-                    shopView.classList.remove('hidden');
+                    shopView.classList.remove('hidden'); // Показуємо екран магазину
                      console.log('Перехід до Магазину');
                 } else if (buttonText === 'Меню') {
-                    menuView.classList.remove('hidden');
+                    menuView.classList.remove('hidden'); // Показуємо екран меню
                     console.log('Перехід до Меню');
                 } else if (buttonText === 'Події') {
-                     eventsView.classList.remove('hidden');
+                     eventsView.classList.remove('hidden'); // Показуємо екран подій
                      console.log('Перехід до Подій');
                 }
 
-                 // Прокручуємо контейнер екранів нагору при перемиканні
-                 viewsContainer.scrollTop = 0;
+                 viewsContainer.scrollTop = 0; // Прокручуємо контейнер екранів нагору при переході
             });
         });
 
-        // Функція для приховування всіх екранів
+        // Функція для приховування всіх екранів (використовується при перемиканні)
         function hideAllViews() {
-            const views = document.querySelectorAll('.view');
-            views.forEach(view => {
-                view.classList.add('hidden');
+            const views = document.querySelectorAll('.view'); // Отримуємо всі елементи з класом 'view'
+            views.forEach(view => { // Для кожного такого елемента
+                view.classList.add('hidden'); // Додаємо клас 'hidden'
             });
         }
 
-        // Робимо екран Меню активним та відповідну кнопку активною при завантаженні
+
+        // --- Код, що виконується при завантаженні сторінки (DOMContentLoaded) ---
+        // Це точка входу для JavaScript після завантаження структури HTML
         document.addEventListener('DOMContentLoaded', () => {
-             hideAllViews(); // Приховуємо всі екрани на старті
-             menuView.classList.remove('hidden'); // Показуємо тільки екран Меню
+             console.log("DOM повністю завантажено."); // Вивід у консоль
 
-             // Знаходимо кнопку Меню та робимо її активною при старті
-             const menuButton = document.querySelector('.footer .nav-button img[alt="Меню"]')?.closest('.nav-button') ||
-                                document.querySelector('.footer .nav-button.active-button'); // Шукаємо за alt або активним класом
+             // Спершу приховуємо всі екрани (щоб показати тільки екран завантаження)
+             hideAllViews();
+             // Показуємо тільки екран завантаження
+             loadingView.classList.remove('hidden');
+             console.log("Екран завантаження показано. Початок симуляції завантаження Web App...");
 
-             if (menuButton) {
-                 navButtons.forEach(btn => btn.classList.remove('active-button')); // Прибираємо з усіх
-                 menuButton.classList.add('active-button'); // Додаємо до кнопки Меню
-             } else {
-                  // Резервний варіант, якщо кнопку Меню не знайдено
-                  console.warn("Кнопка Меню не знайдена для встановлення активного стану при завантаженні.");
-             }
+             // !!! ЦЕЙ РЯДОК ВИКЛИКАЄ ФУНКЦІЮ СИМУЛЯЦІЇ ЗАВАНТАЖЕННЯ ПРИ СТАРТІ !!!
+             startLoadingSimulation(); // <-- ЗАПУСКАЄМО симуляцію завантаження
+
 
               // --- Інтеграція з Telegram Web App SDK (приклад) ---
-              // Цей код виконується, якщо веб-додаток відкрито через Telegram
-              if (Telegram.WebApp) {
-                  Telegram.WebApp.ready(); // Повідомляємо Telegram, що Web App готовий
-                  console.log("Telegram Web App готовий!");
+              // Цей блок коду виконується, якщо веб-додаток відкрито через Telegram клієнт
+              if (Telegram.WebApp) { // Перевіряємо, чи доступний об'єкт Telegram.WebApp
+                  Telegram.WebApp.ready(); // Повідомляємо Telegram, що Web App готовий до відображення
+                  console.log("Telegram Web App SDK готовий!"); // Вивід у консоль
 
                   // Приклад: Отримуємо дані користувача Telegram
                   if (Telegram.WebApp.initDataUnsafe && Telegram.WebApp.initDataUnsafe.user) {
                       const telegramUser = Telegram.WebApp.initDataUnsafe.user;
-                      console.log("Відкрито користувачем Telegram:", telegramUser.first_name, "(ID:", telegramUser.id, ")");
+                      console.log("Web App відкрито користувачем Telegram:", telegramUser.first_name, "(ID:", telegramUser.id, ")");
                       // Ти можеш використовувати telegramUser.id для зв'язку прогресу гри з користувачем
                       // і, наприклад, передавати його до бота, коли потрібно зберегти дані.
+                      // console.log("Повні дані користувача:", telegramUser); // Додаткова інформація
+                      // console.log("initData:", Telegram.WebApp.initData); // initData для верифікації на сервері
+                  } else {
+                       console.log("Telegram Web App SDK не має даних користувача (можливо, застаріла версія клієнта або інші причини).");
                   }
 
-                   // Приклад: Зміна розміру вікна Web App
-                  Telegram.WebApp.expand(); // Розгорнути на весь екран, якщо потрібно
-                  // Або Telegram.WebApp.setViewportStable(true);
 
-                   // Приклад: Додати кнопку "Закрити" в заголовок Web App (не завжди відображається)
-                   // Telegram.WebApp.setHeaderColor('bg_color');
-                   // Telegram.WebApp.MainButton.setText('Закрити гру');
-                   // Telegram.WebApp.MainButton.show();
-                   // Telegram.WebApp.MainButton.onClick(Telegram.WebApp.close);
+                   // Приклад: Розгортання вікна Web App на весь екран
+                   // Рекомендовано для більшості ігор для кращого досвіду
+                  Telegram.WebApp.expand();
+                  console.log("Вікно Web App розгорнуто на весь екран.");
+
+
+                   // Приклад: Додати кнопку "Закрити" в заголовок Web App (не завжди підтримується всіма клієнтами)
+                   /*
+                   try {
+                        Telegram.WebApp.setHeaderColor('bg_color'); // Встановлюємо колір заголовка
+                        Telegram.WebApp.MainButton.setText('Закрити гру'); // Встановлюємо текст кнопки
+                        Telegram.WebApp.MainButton.show(); // Показуємо кнопку
+                        // Додаємо обробник кліку на кнопку в заголовку
+                        Telegram.WebApp.MainButton.onClick(Telegram.WebApp.close); // При кліку закриваємо Web App
+                        console.log("Кнопка 'Закрити гру' в заголовку показана.");
+                   } catch (e) {
+                       console.warn("Не вдалося налаштувати MainButton або HeaderColor:", e);
+                       console.warn("Можливо, не підтримується у цій версії Telegram клієнта або середовищі.");
+                   }
+                   */
+
 
               } else {
-                  console.log("Web App відкрито не через Telegram.");
-                  // Тут може бути логіка для запуску гри в браузері без функцій Telegram
+                  console.log("Web App відкрито не через Telegram (об'єкт Telegram.WebApp недоступний).");
+                  // Тут може бути альтернативна логіка для запуску гри в звичайному браузері
               }
                // --- Кінець інтеграції з Telegram Web App SDK ---
 
          });
-
-
     </script>
-
 </body>
 </html>
